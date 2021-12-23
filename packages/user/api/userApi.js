@@ -1,44 +1,56 @@
 const User = require('../service/userDB');
-
+const passport = require('passport');
 const Router = require('express').Router();
-const bcrypt = require('bcrypt');
-const rounds = 10;
 
 Router.route('/register')
   .post((req, res) => {
-    const { email, password } = req.body;
-    bcrypt.hash(password, rounds, (err, hash) => {
-      const newUser = new User({
-        email: req.body.email,
-        password: hash
+  User.register({ username: req.body.username, email: req.body.email }, req.body.password, (err, user) => {
+    if(!err) {
+      passport.authenticate('local')(req, res, () => {
+        res.send('Successfully registered account')
       })
-      newUser.save((err) => {
-        if(!err) {
-          res.send('Successfully create a new user')
-        } else {
-          res.send(err)
-        }
-      })
-    })
+    } else {
+      res.send(err)
+    }
+  })
   });
 
 Router.route('/login')
   .post((req, res) => {
-    const { email, password } = req.body
-
-    User.findOne({ email: email }, (err, account) => {
+    const user = new User({
+      username: req.body.username,
+      password: req.body.password
+    })
+    
+    req.login(user, (err, user) => {
       if(!err) {
-        bcrypt.compare(password, account.password, (err, result) => {
-          if(result == true) {
-            res.send('Successfully login')
-          } else {
-            res.send('The password you entered is wrong')
-          }
+        passport.authenticate('local')(req, res, () => {
+          res.send('Successfully login')
         })
       } else {
         res.send(err)
       }
     })
   });
+
+Router.route('/logout')
+  .get((req, res) => {
+    req.logout()
+    res.send('Successfully logout')
+  })
+
+Router.route('/auth/google')
+  .get((req, res) => {
+    passport.authenticate('google', { scope: ['profile'] })(req, res, () => {
+      res.redirect('https://www.googleapis.com/oauth2/v3/userinfo')
+    })
+  })
+
+Router.route('/auth/google/source')
+  .get((req, res) => {
+    passport.authenticate('google', { failureRedirect: '/login' })(req, res, () => {
+      res.redirect('/api/articles')
+    })
+  })
 
 module.exports = Router;
