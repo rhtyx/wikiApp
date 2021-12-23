@@ -1,5 +1,5 @@
 require('dotenv').config();
-const mongoose = require('./../../database/MongooseConnect');
+const mongoose = require('../../../database/MongooseConnect');
 const encrypt = require('mongoose-encryption');
 const Schema = mongoose.Schema;
 

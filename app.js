@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const ArticleApi = require('./article/api/articleApi');
-const UserApi = require('./user/api/userApi')
+const ArticleApi = require('./packages/article/api/articleApi');
+const UserApi = require('./packages/user/api/userApi')
 
 const app = express();
 

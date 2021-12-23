@@ -1,4 +1,4 @@
-const mongoose = require('./../../database/MongooseConnect')
+const mongoose = require('../../../database/MongooseConnect')
 
 const articleSchema = {
   title: String,
