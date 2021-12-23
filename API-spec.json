@@ -1,0 +1,65 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+      "title":"API Title",
+      "version":"1.0"
+    },
+    "servers": [
+      {"url":"https://localhost:3000"}
+    ],
+    "paths": {
+      "/articles":{
+        "get":{
+          "tags":["wikiAPI"],
+          "description": "List all articles",
+          "summary": "List all articles",
+          "responses": {
+            "200":{
+              "description": "Success get all articles",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "type": "object",
+                    "properties": {
+                      "code":{
+                        "type": "number"
+                      },
+                      "status":{
+                        "type": "string"
+                      },
+                      "data":{
+                        "type": "array",
+                        "items":{
+
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete":{
+
+        }
+      },
+      "/:author_name":{
+        "get":{
+
+        },
+        "post":{
+
+        },
+        "put":{
+
+        },
+        "patch":{
+
+        },
+        "delete":{
+
+        }
+      }
+    }
+  }
