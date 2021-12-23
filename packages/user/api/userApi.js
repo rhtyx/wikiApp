@@ -1,21 +1,24 @@
 const User = require('../service/userDB');
 
 const Router = require('express').Router();
-const md5 = require('md5')
+const bcrypt = require('bcrypt');
+const rounds = 10;
 
 Router.route('/register')
   .post((req, res) => {
-    const newUser = new User({
-      email: req.body.email,
-      password: md5(req.body.password)
-    })
-
-    newUser.save((err) => {
-      if(!err) {
-        res.send('Successfully create a new user')
-      } else {
-        res.send(err)
-      }
+    const { email, password } = req.body;
+    bcrypt.hash(password, rounds, (err, hash) => {
+      const newUser = new User({
+        email: req.body.email,
+        password: hash
+      })
+      newUser.save((err) => {
+        if(!err) {
+          res.send('Successfully create a new user')
+        } else {
+          res.send(err)
+        }
+      })
     })
   });
 
@@ -23,13 +26,15 @@ Router.route('/login')
   .post((req, res) => {
     const { email, password } = req.body
 
-    User.findOne({ email: email }, (err, result) => {
+    User.findOne({ email: email }, (err, account) => {
       if(!err) {
-        if(result.password === md5(password)) {
-          res.send('Successfully login')
-        } else {
-          res.send('Password you entered is wrong')
-        }
+        bcrypt.compare(password, account.password, (err, result) => {
+          if(result == true) {
+            res.send('Successfully login')
+          } else {
+            res.send('The password you entered is wrong')
+          }
+        })
       } else {
         res.send(err)
       }
